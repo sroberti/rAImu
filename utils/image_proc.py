@@ -10,7 +10,7 @@ def DenoiseDigit(digit):
 def LoadFilters():
     """Load static digit filters from disk"""
     filters = []
-    for i in range(0, 9):
+    for i in range(0, 10):
         filters.append(cv2.cvtColor(cv2.imread("filters/filter" + str(i) + ".jpg"), cv2.COLOR_BGR2GRAY))
     return filters
 
@@ -19,7 +19,9 @@ def ClassifyDigit(digit, filters=LoadFilters()):
     digit = DenoiseDigit(digit)
     scores = []
     for filt in filters:
-        scores.append(np.count_nonzero(np.bitwise_and(digit, filt)))
+        intersection = np.count_nonzero(np.bitwise_and(digit, filt))
+        scores.append(intersection)
+    print(scores)
     return scores.index(max(scores))
 
 def ReadScore(digits):
