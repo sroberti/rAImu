@@ -38,3 +38,8 @@ def DenoiseLives(lives_box):
 def DenoiseBombs(bombs_box):
     """Remove non-red pixels of a bombs region capture"""
     return cv2.inRange(bombs_box, (130, 0, 0, 0), (255, 255, 255, 255))
+
+def CountStars(region):
+    """Count star shapes in a region"""
+    area = np.count_nonzero(region)
+    return int(area/46)
