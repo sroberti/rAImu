@@ -30,3 +30,11 @@ def ReadScore(digits):
     for digit in digits:
         score += str(ClassifyDigit(digit))
     return int(score)
+
+def DenoiseLives(lives_box):
+    """Remove non-red pixels of a lives region capture"""
+    return cv2.inRange(lives_box, (0, 0, 130, 0), (255, 255, 255, 255))
+
+def DenoiseBombs(bombs_box):
+    """Remove non-red pixels of a bombs region capture"""
+    return cv2.inRange(bombs_box, (130, 0, 0, 0), (255, 255, 255, 255))
