@@ -29,5 +29,4 @@ class GameHandle:
         for i in range(9):
             digits.append(self.CaptureScreen(digit_area))
             digit_area['left'] += 14
-            print(digit_area['left'])
         return digits
