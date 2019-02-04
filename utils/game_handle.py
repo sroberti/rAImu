@@ -1,6 +1,6 @@
 from mss.linux import MSS as mss
 from mss import tools
-from pynput import keyboard as KeyboardController
+from pynput import keyboard as kb
 import numpy as np
 import image_proc
 
@@ -9,7 +9,7 @@ class GameHandle:
     """Provide access to the game's screen"""
     def __init__(self):
         """Set regions for important screen data"""
-        self.keyboard = KeyboardController.Controller()
+        self.keyboard = kb.Controller()
 
         self.screen = mss(":0")
         self.monitor = {'top': 0, 'left': 0, 'width': 1920, 'height': 1080}
@@ -17,6 +17,8 @@ class GameHandle:
         self.score_area = {'top': 86, 'left': 500, 'width': 14, 'height': 15}
         self.lives_area = {'top': 121, 'left': 500, 'width': 150, 'height': 10}
         self.bombs_area = {'top': 137, 'left': 500, 'width': 150, 'height': 10}
+
+        self.keystate = {'Z': 0, 'X': 0, kb.Key.shift_l: 0, kb.Key.left: 0, kb.Key.right: 0, kb.Key.up: 0,kb.Key.down: 0,}
 
     def CaptureScreen(self, area):
         """Capture one of the preset areas of the screen."""
@@ -62,3 +64,18 @@ class GameHandle:
             'game': self.CaptureScreen(self.game_area)
             }
         return state
+
+    def UpdateKeyState(self, keystate):
+        """Press or release buttons as needed"""
+        for k, v in keystate:
+            if v != self.keystate[k]:
+                if v == 1:
+                    self.keyboard.press(k)
+                elif v == 0:
+                    self.keyboard.release(k)
+                self.keystate[k] = v
+
+
+
+
+
