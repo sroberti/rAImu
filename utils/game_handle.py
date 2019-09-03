@@ -1,8 +1,10 @@
 from mss.linux import MSS as mss
 from mss import tools
 from pynput import keyboard as kb
+import subprocess
 import numpy as np
 import image_proc
+
 
 
 class GameHandle:
@@ -11,14 +13,27 @@ class GameHandle:
         """Set regions for important screen data"""
         self.keyboard = kb.Controller()
 
+        win = self.GetGameWindow()
+
         self.screen = mss(":0")
-        self.monitor = {'top': 0, 'left': 0, 'width': 1920, 'height': 1080}
-        self.game_area = {'top': 35, 'left': 35, 'width': 380, 'height': 450}
-        self.score_area = {'top': 86, 'left': 500, 'width': 14, 'height': 15}
-        self.lives_area = {'top': 121, 'left': 500, 'width': 150, 'height': 10}
-        self.bombs_area = {'top': 137, 'left': 500, 'width': 150, 'height': 10}
+        #self.monitor = {'top': 0, 'left': 0, 'width': 1920, 'height': 1080}
+        self.game_area = {'top': win['top'] + 35, 'left': win['left'] + 35, 'width': 380, 'height': 450}
+        self.score_area = {'top': win['top'] + 86, 'left': win['left'] + 500, 'width': 14, 'height': 15}
+        self.lives_area = {'top': win['top'] + 121, 'left': win['left'] + 500, 'width': 150, 'height': 10}
+        self.bombs_area = {'top': win['top'] + 137, 'left': win['left'] + 500, 'width': 150, 'height': 10}
 
         self.keystate = {'Z': 0, 'X': 0, kb.Key.shift_l: 0, kb.Key.left: 0, kb.Key.right: 0, kb.Key.up: 0,kb.Key.down: 0,}
+
+    def GetGameWindow(self):
+        """Get the coordinates for the game window."""
+        pipe = subprocess.Popen('xwininfo -root -tree | grep Perfect', shell=True, stdout=subprocess.PIPE)
+        with line in pipe.stdout:
+            winInfo = line.split()
+            corner = winInfo[-1]
+            corner = corner.split('+')
+            win['top'] = corner[1]
+            win['left'] = corner[0]
+        return win
 
     def CaptureScreen(self, area):
         """Capture one of the preset areas of the screen."""
